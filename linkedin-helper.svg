@@ -1,0 +1,110 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Grid texture -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2530" stroke-width="0.8"/>
+    </pattern>
+    <!-- Subtle noise via turbulence -->
+    <filter id="noise" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blended"/>
+      <feComposite in="blended" in2="SourceGraphic" operator="in"/>
+    </filter>
+    <!-- Amber glow for accent line -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0c1016"/>
+      <stop offset="100%" stop-color="#111820"/>
+    </linearGradient>
+    <linearGradient id="amberLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E8A020" stop-opacity="0"/>
+      <stop offset="15%" stop-color="#E8A020" stop-opacity="1"/>
+      <stop offset="85%" stop-color="#E8A020" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#E8A020" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="dimLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2a3545" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#2a3545" stop-opacity="1"/>
+      <stop offset="80%" stop-color="#2a3545" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#2a3545" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bgGrad)"/>
+  <!-- Grid overlay -->
+  <rect width="1280" height="640" fill="url(#grid)"/>
+
+  <!-- Corner bracket decorations - top left -->
+  <path d="M 40 80 L 40 40 L 80 40" fill="none" stroke="#2a3545" stroke-width="1.5"/>
+  <!-- top right -->
+  <path d="M 1200 40 L 1240 40 L 1240 80" fill="none" stroke="#2a3545" stroke-width="1.5"/>
+  <!-- bottom left -->
+  <path d="M 40 560 L 40 600 L 80 600" fill="none" stroke="#2a3545" stroke-width="1.5"/>
+  <!-- bottom right -->
+  <path d="M 1200 600 L 1240 600 L 1240 560" fill="none" stroke="#2a3545" stroke-width="1.5"/>
+
+  <!-- Divider lines -->
+  <rect x="0" y="187" width="1280" height="1" fill="url(#dimLine)"/>
+  <rect x="0" y="188" width="1280" height="1" fill="url(#amberLine)" opacity="0.5" filter="url(#glow)"/>
+
+  <rect x="0" y="452" width="1280" height="1" fill="url(#dimLine)"/>
+
+  <!-- Owner / namespace -->
+  <text x="80" y="152"
+    font-family="'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace"
+    font-size="32"
+    font-weight="400"
+    fill="#5a7a9a"
+    letter-spacing="1">grimlor /</text>
+
+  <!-- Repo name - big and proud -->
+  <text x="80" y="360"
+    font-family="'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace"
+    font-size="96"
+    font-weight="700"
+    fill="#E8F4FF"
+    letter-spacing="-1">linkedin-helper</text>
+
+  <!-- Amber accent bar under repo name -->
+  <rect x="80" y="375" width="320" height="3" fill="#E8A020" opacity="0.7" rx="1.5"/>
+
+  <!-- Description -->
+  <text x="80" y="430"
+    font-family="'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace"
+    font-size="26"
+    font-weight="400"
+    fill="#6a8aaa"
+    letter-spacing="0.3">Add quality of life improvements to LinkedIn skills management</text>
+
+  <!-- Bottom row: tags/badges -->
+  <!-- Tag 1 -->
+  <rect x="80" y="492" width="150" height="36" rx="4" fill="#1a2535" stroke="#2a3d55" stroke-width="1"/>
+  <text x="155" y="516" font-family="'SF Mono', 'Fira Code', monospace" font-size="18" fill="#E8A020" text-anchor="middle" letter-spacing="0.5">LinkedIn</text>
+
+  <!-- Tag 2 -->
+  <rect x="264" y="492" width="240" height="36" rx="4" fill="#1a2535" stroke="#2a3d55" stroke-width="1"/>
+  <text x="384" y="516" font-family="'SF Mono', 'Fira Code', monospace" font-size="18" fill="#7abaaa" text-anchor="middle" letter-spacing="0.5">Browser Extension</text>
+
+  <!-- MIT License badge -->
+  <rect x="1100" y="492" width="100" height="36" rx="4" fill="#1a2535" stroke="#2a3d55" stroke-width="1"/>
+  <text x="1150" y="516" font-family="'SF Mono', 'Fira Code', monospace" font-size="18" fill="#5a7a6a" text-anchor="middle" letter-spacing="0.5">MIT</text>
+
+  <!-- Decorative element: small terminal prompt top right area -->
+  <text x="1100" y="152"
+    font-family="'SF Mono', 'Fira Code', monospace"
+    font-size="22"
+    fill="#1e3040"
+    text-anchor="end">$ skill-compliance --check</text>
+
+  <!-- Subtle code lines decoration, right side -->
+  <text x="1200" y="260" font-family="'SF Mono', monospace" font-size="14" fill="#1a2838" text-anchor="end">spec-before-code</text>
+  <text x="1200" y="285" font-family="'SF Mono', monospace" font-size="14" fill="#1a2838" text-anchor="end">bdd-testing</text>
+  <text x="1200" y="310" font-family="'SF Mono', monospace" font-size="14" fill="#1a2838" text-anchor="end">feature-workflow</text>
+  <text x="1200" y="335" font-family="'SF Mono', monospace" font-size="14" fill="#1a2838" text-anchor="end">conventional-commits</text>
+  <text x="1200" y="360" font-family="'SF Mono', monospace" font-size="14" fill="#1a2838" text-anchor="end">plan-updates</text>
+</svg>

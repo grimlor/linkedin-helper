@@ -185,4 +185,29 @@ describe('StartDeletionQueue', () => {
     // And: no navigation
     expect(navigate).not.toHaveBeenCalled();
   });
+
+  test('uses_default_navigate_to_set_window_location', () => {
+    /**
+     * Given skills are provided but no custom navigate function
+     * When startDeletionQueue is called without the navigate parameter
+     * Then it uses the default which sets window.location.href
+     */
+    // Given: one skill, mock window.location to capture the assignment
+    const skills: SkillCard[] = [
+      { element: document.createElement('a'), name: 'TypeScript', id: '59', editUrl: '/in/user/details/skills/edit/forms/59/' },
+    ];
+    const savedLocation = window.location;
+    // @ts-expect-error — replace Location with simple object to prevent jsdom navigation
+    delete window.location;
+    (window as any).location = { href: '' };
+
+    // When: queue is started without navigate param (uses default)
+    startDeletionQueue(skills);
+
+    // Then: window.location.href was set to the first skill's edit URL
+    expect(window.location.href).toBe('/in/user/details/skills/edit/forms/59/');
+
+    // Cleanup
+    (window as any).location = savedLocation;
+  });
 });

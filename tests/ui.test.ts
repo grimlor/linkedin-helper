@@ -646,4 +646,122 @@ describe('ResultReporting', () => {
     const summaryText = document.querySelector('[data-testid="result-summary"]')?.textContent ?? '';
     expect(summaryText.toLowerCase()).toContain('rate');
   });
+
+  test('user_clicks_dismiss_button_to_close_summary', () => {
+    /**
+     * Given the result summary is displayed
+     * When the user clicks "Dismiss"
+     * Then the summary is removed from the DOM
+     */
+    // Given: result summary shown
+    const result: BulkDeleteResult = {
+      total: 1,
+      succeeded: 1,
+      failed: 0,
+      results: [],
+      rateLimited: false,
+    };
+    showResultSummary(result);
+    expect(document.querySelector('[data-testid="result-summary"]')).not.toBeNull();
+
+    // When: user clicks Dismiss
+    const dismissBtn = document.querySelector('[data-testid="dismiss-btn"]') as HTMLElement;
+    dismissBtn.click();
+
+    // Then: summary is removed
+    expect(document.querySelector('[data-testid="result-summary"]')).toBeNull();
+  });
+});
+
+describe('DuplicateInjectionGuard', () => {
+  /**
+   * REQUIREMENT: Re-injecting the UI must not create duplicate checkboxes.
+   *
+   * WHO: The content script when the URL watcher re-injects after SPA navigation
+   * WHAT: Calling injectBulkDeleteUI twice with the same skills produces only one checkbox per skill
+   * WHY: SPA navigation may trigger re-injection; duplicate checkboxes would confuse the user.
+   *
+   * MOCK BOUNDARY:
+   *   Mock:  DOM structure
+   *   Real:  injectBulkDeleteUI, resetUIState
+   *   Never: Deletion flow
+   */
+
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="skills-container"></div>';
+    resetUIState();
+  });
+
+  test('re_injecting_ui_skips_already_injected_checkboxes', () => {
+    /**
+     * Given the UI has been injected for a skill
+     * When injectBulkDeleteUI is called again with the same skill
+     * Then only one checkbox exists (the guard prevents duplicates)
+     */
+    // Given: skill with UI already injected
+    const skill = makeSkillCardWithLink('TypeScript', 'skill-1');
+    const container = document.getElementById('skills-container')!;
+    container.appendChild(skill.element);
+    injectBulkDeleteUI([skill]);
+
+    // When: UI is injected again with the same skill
+    injectBulkDeleteUI([skill]);
+
+    // Then: still only one checkbox
+    const checkboxes = document.querySelectorAll('input[data-skill-id="skill-1"]');
+    expect(checkboxes).toHaveLength(1);
+  });
+});
+
+describe('DeleteButtonCancelPath', () => {
+  /**
+   * REQUIREMENT: The user can cancel a deletion after clicking "Delete Selected".
+   *
+   * WHO: The user — they click Delete, see the dialog, then cancel
+   * WHAT: Clicking Cancel in the confirmation dialog does NOT start the deletion queue
+   * WHY: The user must be able to change their mind after clicking Delete.
+   *
+   * MOCK BOUNDARY:
+   *   Mock:  DOM structure, startDeletionQueue (mocked at module level)
+   *   Real:  injectBulkDeleteUI, showConfirmationDialog, getSelectedSkills
+   *   Never: Actual deletion
+   */
+
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="skills-container"></div>';
+    resetUIState();
+    (startDeletionQueue as jest.Mock).mockClear();
+  });
+
+  test('user_cancels_after_clicking_delete_does_not_start_queue', async () => {
+    /**
+     * Given 1 skill is selected and the user clicks "Delete Selected"
+     * When the confirmation dialog appears and the user clicks Cancel
+     * Then startDeletionQueue is NOT called
+     */
+    // Given: 1 skill selected
+    const skill = makeSkillCard('TypeScript', 'skill-1');
+    const container = document.getElementById('skills-container')!;
+    container.appendChild(skill.element);
+    injectBulkDeleteUI([skill]);
+    const cb = document.querySelector('input[data-skill-id="skill-1"]') as HTMLInputElement;
+    cb.checked = true;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+
+    // When: user clicks Delete Selected
+    const deleteBtn = document.querySelector('[data-testid="delete-selected-btn"]') as HTMLElement;
+    deleteBtn.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // Then: confirmation dialog appears
+    expect(document.querySelector('[data-testid="confirmation-dialog"]')).not.toBeNull();
+
+    // When: user clicks Cancel
+    const cancelBtn = document.querySelector('[data-testid="cancel-btn"]') as HTMLElement;
+    cancelBtn.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    // Then: startDeletionQueue was NOT called
+    expect(startDeletionQueue).not.toHaveBeenCalled();
+  });
 });
