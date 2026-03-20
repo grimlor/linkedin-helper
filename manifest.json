@@ -12,9 +12,8 @@
 
   "content_scripts": [
     {
-      "matches": ["https://www.linkedin.com/*"],
-      "all_frames": true,
-      "world": "MAIN",
+      "matches": ["https://www.linkedin.com/in/*/details/skills*"],
+      "all_frames": false,
       "js": ["dist/content.js"],
       "run_at": "document_end"
     }

@@ -4,6 +4,9 @@ import tsparser from '@typescript-eslint/parser';
 
 export default [
   {
+    ignores: ['coverage/**', 'dist/**'],
+  },
+  {
     files: ['src/**/*.ts'],
     languageOptions: {
       parser: tsparser,

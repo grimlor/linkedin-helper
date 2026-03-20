@@ -3,7 +3,7 @@
  */
 
 export interface SkillCard {
-  element: HTMLElement;     // The DOM element for this skill's name <p> tag
+  element: HTMLElement;     // The edit link <a> element for this skill
   name: string;             // The display name of the skill
   id: string;               // Numeric skill ID extracted from the edit link href
   editUrl: string;          // Full URL to the skill edit form page
@@ -21,10 +21,4 @@ export interface BulkDeleteResult {
   failed: number;
   results: DeleteResult[];
   rateLimited: boolean;
-}
-
-export interface ThrottleOptions {
-  baseDelayMs: number;
-  maxDelayMs: number;
-  backoffMultiplier: number;
 }
